@@ -285,7 +285,6 @@ body.theme-light .button--danger {
   font-weight: 700;
 }
 
-
 .metric-card--accent {
   border-color: var(--border-strong);
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.26), rgba(99, 102, 241, 0.18));

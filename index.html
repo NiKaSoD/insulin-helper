@@ -181,6 +181,13 @@
         </div>
 
         <section class="card settings-card">
+          <div class="settings-section-header">
+            <div>
+              <h2 data-i18n="settings.parametersTitle">Параметры расчёта</h2>
+              <p data-i18n="settings.parametersText">Изменения применятся к следующим расчётам. Старые записи истории не пересчитываются.</p>
+            </div>
+          </div>
+
           <div class="settings-grid">
             <label class="field">
               <span data-i18n="settings.language">Язык</span>
@@ -210,7 +217,7 @@
               <small class="field-error" data-error-for="settings-xe"></small>
             </label>
 
-            <label class="field">
+            <label class="field settings-grid__wide">
               <span data-i18n="settings.doseStep">Шаг дозы</span>
               <select id="settings-dose-step">
                 <option value="1">1</option>
@@ -220,17 +227,19 @@
             </label>
           </div>
 
-          <div class="settings-actions">
+          <div class="settings-actions settings-actions--main">
             <button class="button button--primary" id="save-settings-btn" type="button" data-i18n="actions.saveSettings">Сохранить настройки</button>
           </div>
         </section>
 
-        <section class="card danger-zone">
-          <div>
-            <h2 data-i18n="settings.dataTitle">Данные</h2>
-            <p data-i18n="settings.dataText">Удаление работает только для данных в этом браузере.</p>
+        <section class="card data-card">
+          <div class="settings-section-header">
+            <div>
+              <h2 data-i18n="settings.dataTitle">Данные</h2>
+              <p data-i18n="settings.dataText">Удаление работает только для данных в этом браузере.</p>
+            </div>
           </div>
-          <div class="danger-zone__actions">
+          <div class="data-actions-grid">
             <button class="button button--secondary" id="clear-history-btn" type="button" data-i18n="actions.clearHistory">Очистить историю</button>
             <button class="button button--danger" id="clear-all-data-btn" type="button" data-i18n="actions.clearAllData">Удалить все данные</button>
           </div>
@@ -348,6 +357,20 @@
       <div class="modal__actions">
         <button class="button button--primary" id="confirm-save-btn" type="button" data-i18n="actions.confirmSave">Подтвердить и сохранить</button>
         <button class="button button--secondary" id="confirm-cancel-btn" type="button" data-i18n="actions.cancel">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal is-hidden" id="action-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="action-confirm-title">
+    <div class="modal__backdrop" data-action-confirm-cancel></div>
+    <div class="modal__content action-confirm-modal">
+      <div class="action-confirm-icon" aria-hidden="true">!</div>
+      <p class="eyebrow" id="action-confirm-eyebrow">Подтверждение</p>
+      <h2 id="action-confirm-title">Подтвердите действие</h2>
+      <p id="action-confirm-text">Это действие требует подтверждения.</p>
+      <div class="modal__actions">
+        <button class="button button--danger" id="action-confirm-accept" type="button">Подтвердить</button>
+        <button class="button button--secondary" id="action-confirm-cancel" type="button" data-i18n="actions.cancel">Отмена</button>
       </div>
     </div>
   </div>

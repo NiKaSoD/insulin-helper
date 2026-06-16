@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Инсулин помощник — локальный калькулятор хлебных единиц и вспомогательного математического расчёта болюсного инсулина." />
+  <title>Инсулин помощник</title>
+
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Основная навигация">
+      <div class="brand">
+        <div class="brand__logo" aria-hidden="true">IH</div>
+        <div>
+          <p class="brand__title" data-i18n="app.name">Инсулин помощник</p>
+          <p class="brand__subtitle" data-i18n="app.subtitle">Локальный расчёт ХЕ</p>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <button class="nav-button active" type="button" data-screen="calculator" data-i18n="nav.calculator">Калькулятор</button>
+        <button class="nav-button" type="button" data-screen="history" data-i18n="nav.history">История</button>
+        <button class="nav-button" type="button" data-screen="settings" data-i18n="nav.settings">Настройки</button>
+        <button class="nav-button" type="button" data-screen="about" data-i18n="nav.about">О приложении</button>
+      </nav>
+
+      <div class="sidebar__notice">
+        <strong data-i18n="privacy.title">Приватность</strong>
+        <span data-i18n="privacy.text">Данные хранятся только в этом браузере на этом устройстве.</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="mobile-header">
+        <div>
+          <p class="brand__title" data-i18n="app.name">Инсулин помощник</p>
+          <p class="brand__subtitle" data-i18n="app.subtitle">Локальный расчёт ХЕ</p>
+        </div>
+      </header>
+
+      <section class="app-screen" data-app-screen="calculator">
+        <div class="screen-header">
+          <div>
+            <p class="eyebrow" data-i18n="calculator.eyebrow">Калькулятор</p>
+            <h1 data-i18n="calculator.title">Вспомогательный расчёт по вашим коэффициентам</h1>
+            <p data-i18n="calculator.description">Коэффициент и значение хлебной единицы задаются при первом запуске и меняются только в настройках.</p>
+          </div>
+          <span class="status-badge">by NiKaSoD</span>
+        </div>
+
+        <div class="calculator-layout">
+          <section class="card calculator-card" aria-labelledby="calculator-title">
+            <div class="card__header">
+              <div>
+                <h2 id="calculator-title" data-i18n="calculator.cardTitle">Расчёт</h2>
+                <p data-i18n="calculator.cardText">Выберите режим и введите данные о продукте или количестве ХЕ.</p>
+              </div>
+            </div>
+
+            <div class="settings-summary" aria-live="polite">
+              <div>
+                <span data-i18n="settingsSummary.xe">1 ХЕ</span>
+                <strong><span id="summary-xe">—</span> <span data-i18n="units.carbs">г углеводов</span></strong>
+              </div>
+              <div>
+                <span data-i18n="settingsSummary.ratio">Коэффициент</span>
+                <strong><span id="summary-ratio">—</span> <span data-i18n="units.insulinPerXe">ед / 1 ХЕ</span></strong>
+              </div>
+              <div>
+                <span data-i18n="settingsSummary.step">Шаг дозы</span>
+                <strong><span id="summary-step">—</span> <span data-i18n="units.insulin">ед.</span></strong>
+              </div>
+            </div>
+
+            <div class="mode-switch" role="tablist" aria-label="Режим расчёта">
+              <button class="mode-switch__button active" type="button" data-calc-mode="product" data-i18n="calculator.byProduct">По продукту</button>
+              <button class="mode-switch__button" type="button" data-calc-mode="xe" data-i18n="calculator.byXe">По ХЕ</button>
+            </div>
+
+            <form class="form-block" id="product-form" data-form="product" novalidate>
+              <div class="form-grid form-grid--two">
+                <label class="field">
+                  <span data-i18n="fields.grams">Граммовка продукта</span>
+                  <input id="product-grams" type="number" inputmode="decimal" min="0" step="1" placeholder="250" data-i18n-placeholder="placeholders.grams" />
+                  <small class="field-error" data-error-for="product-grams"></small>
+                </label>
+
+                <label class="field">
+                  <span data-i18n="fields.carbsPer100">Углеводы на 100 г</span>
+                  <input id="product-carbs" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="13.5" data-i18n-placeholder="placeholders.carbs" />
+                  <small class="field-error" data-error-for="product-carbs"></small>
+                </label>
+              </div>
+
+              <button class="button button--primary" id="calculate-product-btn" type="submit" data-i18n="actions.calculateProduct">Рассчитать по продукту</button>
+            </form>
+
+            <form class="form-block is-hidden" id="xe-form" data-form="xe" novalidate>
+              <div class="form-grid">
+                <label class="field">
+                  <span data-i18n="fields.breadUnits">Количество ХЕ</span>
+                  <input id="xe-count" type="number" inputmode="decimal" min="0" step="0.1" placeholder="4" data-i18n-placeholder="placeholders.xe" />
+                  <small class="field-error" data-error-for="xe-count"></small>
+                </label>
+              </div>
+
+              <button class="button button--primary" id="calculate-xe-btn" type="submit" data-i18n="actions.calculateXe">Рассчитать по ХЕ</button>
+            </form>
+
+            <section class="result-card is-hidden" id="result-section" aria-labelledby="result-title" tabindex="-1">
+              <div class="card__header">
+                <div>
+                  <h2 id="result-title" data-i18n="result.title">Результат расчёта</h2>
+                  <p data-i18n="result.subtitle">Результат расположен сразу под формой расчёта.</p>
+                </div>
+              </div>
+
+              <div class="result-grid">
+                <article class="metric-card" id="metric-carbs-card">
+                  <span data-i18n="result.totalCarbs">Углеводы</span>
+                  <strong id="result-carbs">—</strong>
+                </article>
+
+                <article class="metric-card">
+                  <span data-i18n="result.breadUnits">ХЕ</span>
+                  <strong id="result-xe">—</strong>
+                </article>
+
+                <article class="metric-card">
+                  <span data-i18n="result.exactDose">Точный расчёт</span>
+                  <strong id="result-exact">—</strong>
+                </article>
+
+                <article class="metric-card metric-card--accent">
+                  <span data-i18n="result.nearestDose">Математически ближе</span>
+                  <strong id="result-nearest">—</strong>
+                </article>
+              </div>
+
+              <div class="dose-options" id="dose-options"></div>
+              <p class="warning-text" data-i18n="safety.shortWarning">Сайт не назначает дозу инсулина. Фактическое решение пользователь принимает самостоятельно по рекомендациям врача.</p>
+            </section>
+          </section>
+        </div>
+      </section>
+
+      <section class="app-screen is-hidden" data-app-screen="history">
+        <div class="screen-header">
+          <div>
+            <p class="eyebrow" data-i18n="history.eyebrow">История</p>
+            <h1 data-i18n="history.title">Подтверждённые записи</h1>
+            <p data-i18n="history.description">Здесь сохраняются только те значения, которые были подтверждены пользователем.</p>
+          </div>
+        </div>
+
+        <section class="card history-screen-card">
+          <div class="card__header card__header--between">
+            <div>
+              <h2 data-i18n="history.allTitle">Вся история</h2>
+              <p data-i18n="history.allSubtitle">Локальные записи этого браузера.</p>
+            </div>
+            <button class="button button--secondary button--small" id="clear-history-inline-btn" type="button" data-i18n="actions.clearHistory">Очистить историю</button>
+          </div>
+          <div class="history-list" id="full-history-list"></div>
+        </section>
+      </section>
+
+      <section class="app-screen is-hidden" data-app-screen="settings">
+        <div class="screen-header">
+          <div>
+            <p class="eyebrow" data-i18n="settings.eyebrow">Настройки</p>
+            <h1 data-i18n="settings.title">Личные коэффициенты и параметры</h1>
+            <p data-i18n="settings.description">Эти значения используются в калькуляторе как постоянные параметры.</p>
+          </div>
+        </div>
+
+        <section class="card settings-card">
+          <div class="settings-grid">
+            <label class="field">
+              <span data-i18n="settings.language">Язык</span>
+              <select id="settings-language">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span data-i18n="settings.theme">Тема</span>
+              <select id="settings-theme">
+                <option value="dark" data-i18n="theme.dark">Тёмная</option>
+                <option value="light" data-i18n="theme.light">Светлая</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span data-i18n="settings.ratio">Основной коэффициент, ед / 1 ХЕ</span>
+              <input id="settings-ratio" type="number" inputmode="decimal" min="0" step="0.1" placeholder="1.5" />
+              <small class="field-error" data-error-for="settings-ratio"></small>
+            </label>
+
+            <label class="field">
+              <span data-i18n="settings.xeValue">1 ХЕ, г углеводов</span>
+              <input id="settings-xe" type="number" inputmode="decimal" min="0" step="0.1" placeholder="12" />
+              <small class="field-error" data-error-for="settings-xe"></small>
+            </label>
+
+            <label class="field">
+              <span data-i18n="settings.doseStep">Шаг дозы</span>
+              <select id="settings-dose-step">
+                <option value="1">1</option>
+                <option value="0.5">0.5</option>
+                <option value="0.1">0.1</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="settings-actions">
+            <button class="button button--primary" id="save-settings-btn" type="button" data-i18n="actions.saveSettings">Сохранить настройки</button>
+          </div>
+        </section>
+
+        <section class="card danger-zone">
+          <div>
+            <h2 data-i18n="settings.dataTitle">Данные</h2>
+            <p data-i18n="settings.dataText">Удаление работает только для данных в этом браузере.</p>
+          </div>
+          <div class="danger-zone__actions">
+            <button class="button button--secondary" id="clear-history-btn" type="button" data-i18n="actions.clearHistory">Очистить историю</button>
+            <button class="button button--danger" id="clear-all-data-btn" type="button" data-i18n="actions.clearAllData">Удалить все данные</button>
+          </div>
+        </section>
+      </section>
+
+      <section class="app-screen is-hidden" data-app-screen="about">
+        <div class="screen-header">
+          <div>
+            <p class="eyebrow" data-i18n="about.eyebrow">О приложении</p>
+            <h1 data-i18n="app.name">Инсулин помощник</h1>
+          </div>
+        </div>
+
+        <section class="card prose-card">
+          <p data-i18n="about.p1">Это статический сайт без backend и базы данных. Все настройки и история хранятся локально в браузере пользователя.</p>
+          <p data-i18n="about.p2">Приложение не заменяет врача и не назначает дозу инсулина. Оно предназначено только для прозрачного математического расчёта по данным пользователя.</p>
+
+          <h2 data-i18n="about.formulasTitle">Формулы расчёта</h2>
+          <div class="formula-list">
+            <article class="formula-card">
+              <h3 data-i18n="about.productFormulaTitle">Расчёт по продукту</h3>
+              <code data-i18n="about.formulaCarbs">углеводы = граммовка продукта × углеводы на 100 г / 100</code>
+              <code data-i18n="about.formulaXe">ХЕ = углеводы / грамм углеводов в 1 ХЕ</code>
+              <code data-i18n="about.formulaDose">точный расчёт = ХЕ × коэффициент инсулина на 1 ХЕ</code>
+            </article>
+            <article class="formula-card">
+              <h3 data-i18n="about.xeFormulaTitle">Расчёт по ХЕ</h3>
+              <code data-i18n="about.formulaDoseXe">точный расчёт = ХЕ × коэффициент инсулина на 1 ХЕ</code>
+            </article>
+            <article class="formula-card">
+              <h3 data-i18n="about.roundingTitle">Округление</h3>
+              <code data-i18n="about.roundingFormula">нижний и верхний варианты рассчитываются по выбранному шагу дозы</code>
+              <p data-i18n="about.roundingText">Сайт показывает математически ближайшее значение, но фактическую дозу пользователь выбирает самостоятельно.</p>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <aside class="right-panel" aria-label="Последние записи">
+      <section class="card last-history-card">
+        <div class="card__header">
+          <div>
+            <h2 data-i18n="history.lastTitle">Последние 5 уколов</h2>
+            <p data-i18n="history.lastSubtitle">Подтверждённые записи.</p>
+          </div>
+        </div>
+
+        <div class="history-list history-list--last" id="last-history-list"></div>
+        <button class="button button--secondary button--full all-history-button" type="button" data-screen="history" data-i18n="history.allButton">Вся история</button>
+      </section>
+    </aside>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Мобильная навигация">
+    <button class="mobile-nav__button active" type="button" data-screen="calculator" data-i18n="nav.calculator">Калькулятор</button>
+    <button class="mobile-nav__button" type="button" data-screen="history" data-i18n="nav.history">История</button>
+    <button class="mobile-nav__button" type="button" data-screen="settings" data-i18n="nav.settings">Настройки</button>
+    <button class="mobile-nav__button" type="button" data-screen="about" data-i18n="nav.about">О приложении</button>
+  </nav>
+
+  <div class="modal" id="onboarding-modal" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+    <div class="modal__backdrop"></div>
+    <div class="modal__content modal__content--wide">
+      <section class="onboarding-step" data-onboarding-step="language">
+        <p class="eyebrow">Language / Язык</p>
+        <h2 id="onboarding-title">Выберите язык / Choose language</h2>
+        <p>Перед началом выберите язык интерфейса.</p>
+        <div class="language-choice">
+          <button class="button button--primary" type="button" data-language-choice="ru">Русский</button>
+          <button class="button button--secondary" type="button" data-language-choice="en">English</button>
+        </div>
+      </section>
+
+      <section class="onboarding-step is-hidden" data-onboarding-step="agreement">
+        <p class="eyebrow" data-i18n="onboarding.stepAgreement">Безопасность</p>
+        <h2 data-i18n="onboarding.agreementTitle">Важное предупреждение</h2>
+        <p data-i18n="onboarding.agreementText">Этот сайт не назначает дозу инсулина и не заменяет врача. Расчёт выполняется только по коэффициентам, которые пользователь вводит самостоятельно. Не используйте сайт при плохом самочувствии, гипогликемии или если расчёт кажется необычным.</p>
+        <label class="checkbox-field">
+          <input id="agreement-checkbox" type="checkbox" />
+          <span data-i18n="onboarding.agreementCheck">Я понимаю, что сайт выполняет только математический расчёт и не заменяет врача.</span>
+        </label>
+        <button class="button button--primary" id="agreement-next-btn" type="button" disabled data-i18n="actions.continue">Продолжить</button>
+      </section>
+
+      <section class="onboarding-step is-hidden" data-onboarding-step="setup">
+        <p class="eyebrow" data-i18n="onboarding.stepSetup">Первичная настройка</p>
+        <h2 data-i18n="onboarding.setupTitle">Введите ваши значения</h2>
+        <p data-i18n="onboarding.setupText">Эти параметры будут использоваться в калькуляторе. Позже их можно изменить только в настройках.</p>
+        <div class="form-grid">
+          <label class="field">
+            <span data-i18n="settings.xeValue">1 ХЕ, г углеводов</span>
+            <input id="onboarding-xe" type="number" inputmode="decimal" min="0" step="0.1" placeholder="12" />
+            <small class="field-error" data-error-for="onboarding-xe"></small>
+          </label>
+          <label class="field">
+            <span data-i18n="settings.ratio">Основной коэффициент, ед / 1 ХЕ</span>
+            <input id="onboarding-ratio" type="number" inputmode="decimal" min="0" step="0.1" placeholder="1.5" />
+            <small class="field-error" data-error-for="onboarding-ratio"></small>
+          </label>
+        </div>
+        <button class="button button--primary" id="finish-onboarding-btn" type="button" data-i18n="actions.startUsing">Начать пользоваться</button>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal is-hidden" id="confirm-dose-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-dose-title">
+    <div class="modal__backdrop" data-close-confirm></div>
+    <div class="modal__content confirm-modal">
+      <p class="eyebrow" data-i18n="confirm.eyebrow">Проверка перед сохранением</p>
+      <h2 id="confirm-dose-title" data-i18n="confirm.title">Подтверждение фактической дозы</h2>
+      <p data-i18n="confirm.text">Проверьте крупное значение ниже. Если оно не соответствует выбранной фактической дозе, отмените действие.</p>
+      <div class="confirm-dose-number"><span id="confirm-dose-value">—</span> <span data-i18n="units.insulin">ед.</span></div>
+      <div class="modal__actions">
+        <button class="button button--primary" id="confirm-save-btn" type="button" data-i18n="actions.confirmSave">Подтвердить и сохранить</button>
+        <button class="button button--secondary" id="confirm-cancel-btn" type="button" data-i18n="actions.cancel">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="js/storage.js" defer></script>
+  <script src="js/calculator.js" defer></script>
+  <script src="js/validation.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/safety.js" defer></script>
+  <script src="js/history.js" defer></script>
+  <script src="js/settings.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
